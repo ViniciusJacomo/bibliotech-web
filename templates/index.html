@@ -13,7 +13,7 @@
                         <div class="col-md-6"><input type="text" name="nome" class="form-control" placeholder="Nome do Livro" required></div>
                         <div class="col-md-6"><input type="text" name="autor" class="form-control" placeholder="Autor" required></div>
                         <div class="col-md-5"><input type="text" name="categoria" class="form-control" placeholder="Categoria" required></div>
-                        <div class="col-md-4"><input type="text" name="isbn" class="form-control" placeholder="ISBN (Opcional)"></div>
+                        <div class="col-md-4"><input type="text" name="isbn" class="form-control" placeholder="ISBN "></div>
                         <div class="col-md-3"><input type="number" name="quantidade" class="form-control" placeholder="Qtd" min="1" required></div>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">
@@ -56,7 +56,7 @@
 </div>
 
 <div class="mb-4">
-    <input type="text" id="buscaLivros" class="form-control py-3 shadow-sm border-0" style="border-radius: 12px; padding-left: 1.5rem;" placeholder="Buscar livros por título, autor ou categoria...">
+    <input type="text" id="buscaLivros" class="form-control py-3 shadow-sm border-0" style="padding-left: 1.5rem;" placeholder="Buscar livros por título, autor ou categoria...">
 </div>
 
 <h5 class="text-secondary fw-bold mb-3 ms-2">Estoque e Disponibilidade</h5>
@@ -84,7 +84,7 @@
                     {% endif %}
                 </td>
                 <td class="text-center">
-                    <a href="/excluir_livro/{{ livro.id }}" class="btn btn-sm btn-outline-danger" style="border-radius: 8px;" onclick="return confirm('Tem certeza que deseja excluir o livro {{ livro.nome }} permanentemente?');" title="Excluir Livro">
+                    <a href="/excluir_livro/{{ livro.id }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja excluir o livro {{ livro.nome }} permanentemente?');" title="Excluir Livro">
                         Excluir
                     </a>
                 </td>
@@ -117,13 +117,13 @@
                     {% endif %}
                 </td>
                 <td class="text-center">
-                    <a href="/devolver/{{ emp.id }}" class="btn btn-sm btn-outline-secondary" style="border-radius: 8px;">
+                    <a href="/devolver/{{ emp.id }}" class="btn btn-sm btn-outline-secondary">
                         Devolver
                     </a>
                 </td>
             </tr>
             {% else %}
-        
+            <tr><td colspan="6" class="text-center text-muted py-4">Nenhum livro emprestado no momento. A biblioteca está com o estoque completo!</td></tr>
             {% endfor %}
         </tbody>
     </table>
