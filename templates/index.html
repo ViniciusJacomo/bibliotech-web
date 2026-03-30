@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-md-6 mb-4 mb-md-0">
+        <div class="card card-novo-livro">
+            <div class="card-header font-weight-bold">
+                Novo Livro
+            </div>
+            <div class="card-body">
+                <form action="/adicionar_livro" method="POST">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6"><input type="text" name="nome" class="form-control" placeholder="Nome do Livro" required></div>
+                        <div class="col-md-6"><input type="text" name="autor" class="form-control" placeholder="Autor" required></div>
+                        <div class="col-md-5"><input type="text" name="categoria" class="form-control" placeholder="Categoria" required></div>
+                        <div class="col-md-4"><input type="text" name="isbn" class="form-control" placeholder="ISBN (Opcional)"></div>
+                        <div class="col-md-3"><input type="number" name="quantidade" class="form-control" placeholder="Qtd" min="1" required></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        Cadastrar Livro
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card card-emprestimo">
+            <div class="card-header font-weight-bold">
+                Registrar Empréstimo
+            </div>
+            <div class="card-body">
+                <form action="/emprestar" method="POST">
+                    <div class="mb-3">
+                        <select name="livro_id" class="form-select" required>
+                            <option value="">Selecione um livro disponível...</option>
+                            {% for livro in livros if livro.quantidade > 0 %}
+                                <option value="{{ livro.id }}">{{ livro.nome }} (Estoque: {{ livro.quantidade }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" name="nome_pessoa" class="form-control" placeholder="Nome do Leitor" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label text-muted small ms-1 mb-1">Prazo de Devolução</label>
+                        <input type="date" name="prazo_devolucao" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">
+                        Confirmar Empréstimo
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-4">
+    <input type="text" id="buscaLivros" class="form-control py-3 shadow-sm border-0" style="border-radius: 12px; padding-left: 1.5rem;" placeholder="Buscar livros por título, autor ou categoria...">
+</div>
+
+<h5 class="text-secondary fw-bold mb-3 ms-2">Estoque e Disponibilidade</h5>
+<div class="table-wrapper">
+    <table class="table table-borderless" id="tabelaLivros">
+        <thead>
+            <tr>
+                <th>Nome do Livro</th><th>Autor</th><th>Categoria</th><th class="text-center">Estoque</th><th class="text-center">Status</th><th class="text-center">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for livro in livros %}
+            <tr>
+                <td class="fw-medium text-dark">{{ livro.nome }}</td>
+                <td>{{ livro.autor }}</td>
+                <td>{{ livro.categoria }}</td>
+                <td class="text-center fw-bold">{{ livro.quantidade }}</td>
+                <td class="text-center">
+                    {% if livro.quantidade == 0 %}
+                        <span class="badge bg-danger">Esgotado</span>
+                    {% elif livro.quantidade <= 2 %}
+                        <span class="badge bg-warning">Estoque Baixo</span>
+                    {% else %}
+                        <span class="badge bg-success">Disponível</span>
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    <a href="/excluir_livro/{{ livro.id }}" class="btn btn-sm btn-outline-danger" style="border-radius: 8px;" onclick="return confirm('Tem certeza que deseja excluir o livro {{ livro.nome }} permanentemente?');" title="Excluir Livro">
+                        Excluir
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h5 class="text-secondary fw-bold mb-3 ms-2 mt-5">Empréstimos Ativos</h5>
+<div class="table-wrapper">
+    <table class="table table-borderless">
+        <thead>
+            <tr>
+                <th>Livro Emprestado</th><th>Leitor</th><th>Retirada</th><th>Devolução</th><th class="text-center">Status</th><th class="text-center">Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in emprestimos %}
+            <tr class="{% if emp.prazo_devolucao < hoje %}linha-atrasada{% endif %}">
+                <td class="fw-medium text-dark">{{ emp.livro.nome }}</td>
+                <td>{{ emp.nome_pessoa }}</td>
+                <td>{{ emp.data_emprestimo.strftime('%d/%m/%Y') }}</td>
+                <td class="fw-medium text-dark">{{ emp.prazo_devolucao.strftime('%d/%m/%Y') }}</td>
+                <td class="text-center">
+                    {% if emp.prazo_devolucao < hoje %}
+                        <span class="badge bg-danger">Atrasado</span>
+                    {% else %}
+                        <span class="badge bg-info">No Prazo</span>
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    <a href="/devolver/{{ emp.id }}" class="btn btn-sm btn-outline-secondary" style="border-radius: 8px;">
+                        Devolver
+                    </a>
+                </td>
+            </tr>
+            {% else %}
+        
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+document.getElementById('buscaLivros').addEventListener('keyup', function() {
+    let valor = this.value.toLowerCase();
+    let linhas = document.querySelectorAll('#tabelaLivros tbody tr');
+    linhas.forEach(function(linha) {
+        let texto = linha.innerText.toLowerCase();
+        linha.style.display = texto.includes(valor) ? '' : 'none';
+    });
+});
+</script>
+{% endblock %}

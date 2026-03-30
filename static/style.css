@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f4f8;
+    color: hsl(2, 98%, 50%);
+}
+
+
+.navbar {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+    padding: 1rem 0;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.75rem;
+    letter-spacing: 0.5px;
+    color: #f8fafc !important;
+}
+
+
+.card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    background: #ffffff;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    transform: translateY(-4px);
+}
+
+.card-header {
+    background: #ffffff !important;
+    color: #1e293b !important;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 2px solid;
+}
+
+.card-novo-livro .card-header { border-bottom-color: #3b82f6; }
+.card-emprestimo .card-header { border-bottom-color: #10b981; }
+
+
+.form-control, .form-select {
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    background-color: #f8fafc;
+    transition: all 0.2s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    background-color: #ffffff;
+}
+
+
+.btn {
+    border-radius: 10px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s;
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* --- Tabelas e Relatórios --- */
+.table-wrapper {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+.table {
+    margin-bottom: 0;
+    color: #475569;
+}
+
+.table thead th {
+    border-bottom: 2px solid #e2e8f0;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    padding: 1rem;
+    background: transparent;
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.table tbody tr:hover { background-color: #f8fafc; }
+
+/* --- Badges de Status (Pílulas Pastel) --- */
+.badge {
+    padding: 0.5rem 0.8rem;
+    border-radius: 50px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.bg-success { background-color: #d1fae5 !important; color: #065f46 !important; }
+.bg-warning { background-color: #fef3c7 !important; color: #92400e !important; }
+.bg-danger { background-color: #fee2e2 !important; color: #991b1b !important; }
+.bg-info { background-color: #e0f2fe !important; color: #075985 !important; }
+
+/* --- Novo Destaque Sofisticado para Atrasos --- */
+@keyframes pulsoAtraso {
+    0% { box-shadow: inset 4px 0 0 #ef4444, 0 0 0 rgba(239, 68, 68, 0); }
+    50% { box-shadow: inset 4px 0 0 #ef4444, 0 0 10px rgba(239, 68, 68, 0.1); }
+    100% { box-shadow: inset 4px 0 0 #ef4444, 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.linha-atrasada {
+    animation: pulsoAtraso 2s infinite;
+    background-color: #fffbfa;
+}
