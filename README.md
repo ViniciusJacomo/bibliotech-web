@@ -84,7 +84,7 @@ O diagrama abaixo representa as classes, atributos e relacionamentos exatamente 
 
 ## 5. Tecnologias Utilizadas
 
-*   **Python 3.x**
+*   **Python**
 *   **Flask** (micro framework web)
 *   **HTML + Bootstrap** (templates)
 *   **Mermaid** (diagramas no GitHub)
