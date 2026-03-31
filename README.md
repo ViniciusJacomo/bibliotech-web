@@ -1,6 +1,6 @@
 <h1>Software de Gestão de Biblioteca Web</h1>
 
-Escopo
+## Escopo
 
 
 ## Integrantes do Projeto
