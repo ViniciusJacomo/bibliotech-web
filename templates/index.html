@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="row mb-5">
-    <div class="col-md-6 mb-4 mb-md-0">
+    <div class="col-12 mb-4">
         <div class="card card-novo-livro">
             <div class="card-header font-weight-bold">
                 Novo Livro
@@ -10,11 +10,11 @@
             <div class="card-body">
                 <form action="/adicionar_livro" method="POST">
                     <div class="row g-3 mb-3">
-                        <div class="col-md-6"><input type="text" name="nome" class="form-control" placeholder="Nome do Livro" required></div>
-                        <div class="col-md-6"><input type="text" name="autor" class="form-control" placeholder="Autor" required></div>
-                        <div class="col-md-5"><input type="text" name="categoria" class="form-control" placeholder="Categoria" required></div>
-                        <div class="col-md-4"><input type="text" name="isbn" class="form-control" placeholder="ISBN "></div>
-                        <div class="col-md-3"><input type="number" name="quantidade" class="form-control" placeholder="Qtd" min="1" required></div>
+                        <div class="col-md-3"><input type="text" name="nome" class="form-control" placeholder="Nome do Livro" required></div>
+                        <div class="col-md-3"><input type="text" name="autor" class="form-control" placeholder="Autor" required></div>
+                        <div class="col-md-3"><input type="text" name="categoria" class="form-control" placeholder="Categoria" required></div>
+                        <div class="col-md-2"><input type="text" name="isbn" class="form-control" placeholder="ISBN"></div>
+                        <div class="col-md-1"><input type="number" name="quantidade" class="form-control" placeholder="Qtd" min="1" required></div>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">
                         Cadastrar Livro
@@ -24,27 +24,31 @@
         </div>
     </div>
     
-    <div class="col-md-6">
+    <div class="col-12">
         <div class="card card-emprestimo">
             <div class="card-header font-weight-bold">
                 Registrar Empréstimo
             </div>
             <div class="card-body">
                 <form action="/emprestar" method="POST">
-                    <div class="mb-3">
-                        <select name="livro_id" class="form-select" required>
-                            <option value="">Selecione um livro disponível...</option>
-                            {% for livro in livros if livro.quantidade > 0 %}
-                                <option value="{{ livro.id }}">{{ livro.nome }} (Estoque: {{ livro.quantidade }})</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <input type="text" name="nome_pessoa" class="form-control" placeholder="Nome do Leitor" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label text-muted small ms-1 mb-1">Prazo de Devolução</label>
-                        <input type="date" name="prazo_devolucao" class="form-control" required>
+                    <div class="row g-3 mb-3 align-items-end">
+                        <div class="col-md-5">
+                            <label class="form-label text-muted small ms-1 mb-1">Selecione o Livro</label>
+                            <select name="livro_id" class="form-select" required>
+                                <option value="">Selecione um livro disponível...</option>
+                                {% for livro in livros if livro.quantidade > 0 %}
+                                    <option value="{{ livro.id }}">{{ livro.nome }} (Estoque: {{ livro.quantidade }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted small ms-1 mb-1">Nome do Leitor</label>
+                            <input type="text" name="nome_pessoa" class="form-control" placeholder="Nome do Leitor" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small ms-1 mb-1">Prazo de Devolução</label>
+                            <input type="date" name="prazo_devolucao" class="form-control" required>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-success w-100">
                         Confirmar Empréstimo
@@ -123,7 +127,6 @@
                 </td>
             </tr>
             {% else %}
-            <tr><td colspan="6" class="text-center text-muted py-4">Nenhum livro emprestado no momento. A biblioteca está com o estoque completo!</td></tr>
             {% endfor %}
         </tbody>
     </table>
