@@ -98,6 +98,9 @@ O diagrama abaixo representa as classes, atributos e relacionamentos exatamente 
 *   `static/` → CSS, JS e imagens
 
 
+## 7. Cronograma
+https://photos.app.goo.gl/R39ybWoATUdRor7R8
+
 ## 8. Considerações Finais
 
 O **Software de Gestão de Biblioteca Web** foi desenvolvido com o objetivo de facilitar a administração de acervos e empréstimos de maneira prática e funcional.\
