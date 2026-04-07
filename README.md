@@ -99,7 +99,8 @@ O diagrama abaixo representa as classes, atributos e relacionamentos exatamente 
 
 
 ## 7. Cronograma
-https://photos.app.goo.gl/R39ybWoATUdRor7R8
+<img width="770" height="903" alt="image" src="https://github.com/user-attachments/assets/68b47334-0aac-4565-8efc-42830f92855b" />
+
 
 ## 8. Considerações Finais
 
