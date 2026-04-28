@@ -99,8 +99,9 @@ O diagrama abaixo representa as classes, atributos e relacionamentos exatamente 
 
 
 ## 7. Cronograma
-<img width="770" height="903" alt="image" src="https://github.com/user-attachments/assets/68b47334-0aac-4565-8efc-42830f92855b" />
-
+28/04/2026: Aprensentação do Beta
+12/05/2026: Aprensentação do Banco
+26/05/2026: Aprensentação do Projeto
 
 ## 8. Considerações Finais
 
