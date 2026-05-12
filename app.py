@@ -1,80 +1,83 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from datetime import datetime, date
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.secret_key = "chave_secreta_super_segura"
 
+# Configuração do banco de dados
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'bibliotech.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-lista_livros = []
-lista_emprestimos = []
+db = SQLAlchemy(app)
 
+# --- MODELOS ---
 
-contador_livros = 1
-contador_emprestimos = 1
+class Livro(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(200), nullable=False)
+    autor = db.Column(db.String(200), nullable=False)
+    categoria = db.Column(db.String(100), nullable=False)
+    isbn = db.Column(db.String(50), nullable=False)
+    quantidade = db.Column(db.Integer, nullable=False, default=0)
+    
+    emprestimos = db.relationship('Emprestimo', backref='livro', lazy=True, cascade="all, delete-orphan")
 
-class Livro:
-    def __init__(self, id, nome, autor, categoria, isbn, quantidade):
-        self.id = id
-        self.nome = nome
-        self.autor = autor
-        self.categoria = categoria
-        self.isbn = isbn
-        self.quantidade = quantidade
+class Emprestimo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    livro_id = db.Column(db.Integer, db.ForeignKey('livro.id'), nullable=False)
+    nome_pessoa = db.Column(db.String(200), nullable=False)
+    data_emprestimo = db.Column(db.Date, nullable=False, default=date.today)
+    prazo_devolucao = db.Column(db.Date, nullable=False)
+    data_devolucao = db.Column(db.Date, nullable=True)
 
-class Emprestimo:
-    def __init__(self, id, livro, nome_pessoa, prazo_devolucao):
-        self.id = id
-        self.livro = livro  # Guarda o objeto Livro inteiro
-        self.nome_pessoa = nome_pessoa
-        self.data_emprestimo = date.today()
-        self.prazo_devolucao = prazo_devolucao
-        self.data_devolucao = None
+# Cria o banco de dados e as tabelas
+with app.app_context():
+    os.makedirs(os.path.join(basedir, 'instance'), exist_ok=True)
+    db.create_all()
 
 # --- ROTAS ---
 
 @app.route('/')
 def index():
-    
-    emprestimos_ativos = [e for e in lista_emprestimos if e.data_devolucao is None]
+    livros = Livro.query.all()
+    # Empréstimos ativos (onde data_devolucao é nula)
+    emprestimos_ativos = Emprestimo.query.filter_by(data_devolucao=None).all()
     hoje = date.today()
-    return render_template('index.html', livros=lista_livros, emprestimos=emprestimos_ativos, hoje=hoje)
+    return render_template('index.html', livros=livros, emprestimos=emprestimos_ativos, hoje=hoje)
 
 @app.route('/adicionar_livro', methods=['POST'])
 def adicionar_livro():
-    global contador_livros
-    
     nome = request.form.get('nome')
     autor = request.form.get('autor')
     categoria = request.form.get('categoria')
     isbn = request.form.get('isbn')
     quantidade = int(request.form.get('quantidade'))
     
-    # Cria o livro (arrumar)
-    novo_livro = Livro(contador_livros, nome, autor, categoria, isbn, quantidade)
-    lista_livros.append(novo_livro)
-    contador_livros += 1
+    novo_livro = Livro(nome=nome, autor=autor, categoria=categoria, isbn=isbn, quantidade=quantidade)
+    db.session.add(novo_livro)
+    db.session.commit()
     
     flash('Livro cadastrado com sucesso!', 'success')
     return redirect(url_for('index'))
 
 @app.route('/emprestar', methods=['POST'])
 def emprestar():
-    global contador_emprestimos
-    
     livro_id = int(request.form.get('livro_id'))
     nome_pessoa = request.form.get('nome_pessoa')
     prazo_str = request.form.get('prazo_devolucao')
     
-   
-    livro = next((l for l in lista_livros if l.id == livro_id), None)
+    livro = Livro.query.get(livro_id)
     
     if livro and livro.quantidade > 0:
         prazo = datetime.strptime(prazo_str, '%Y-%m-%d').date()
-        novo_emprestimo = Emprestimo(contador_emprestimos, livro, nome_pessoa, prazo)
+        novo_emprestimo = Emprestimo(livro_id=livro.id, nome_pessoa=nome_pessoa, prazo_devolucao=prazo)
         
         livro.quantidade -= 1 
-        lista_emprestimos.append(novo_emprestimo)
-        contador_emprestimos += 1
+        db.session.add(novo_emprestimo)
+        db.session.commit()
         
         flash('Empréstimo realizado com sucesso!', 'success')
     else:
@@ -84,29 +87,23 @@ def emprestar():
 
 @app.route('/devolver/<int:id_emprestimo>')
 def devolver(id_emprestimo):
-    # Busca o empréstimo na lista
-    emprestimo = next((e for e in lista_emprestimos if e.id == id_emprestimo), None)
+    emprestimo = Emprestimo.query.get(id_emprestimo)
     
     if emprestimo and not emprestimo.data_devolucao:
         emprestimo.data_devolucao = date.today()
         emprestimo.livro.quantidade += 1
+        db.session.commit()
         flash('Livro devolvido com sucesso!', 'success')
         
     return redirect(url_for('index'))
 
 @app.route('/excluir_livro/<int:id_livro>')
 def excluir_livro(id_livro):
-    global lista_livros, lista_emprestimos
-    
-    # Busca o livro
-    livro = next((l for l in lista_livros if l.id == id_livro), None)
+    livro = Livro.query.get(id_livro)
     
     if livro:
-        # Remove todos os empréstimos ligados a esse livro para não quebrar a tela
-        lista_emprestimos = [e for e in lista_emprestimos if e.livro.id != livro.id]
-        
-        # Remove o livro do estoque
-        lista_livros.remove(livro)
+        db.session.delete(livro)
+        db.session.commit()
         flash(f'O livro "{livro.nome}" foi excluído do sistema.', 'success')
         
     return redirect(url_for('index'))
