@@ -98,9 +98,13 @@
     </table>
 </div>
 
-<h5 class="text-secondary fw-bold mb-3 ms-2 mt-5">Empréstimos Ativos</h5>
+<div class="mb-4 mt-5">
+    <input type="text" id="buscaEmprestimos" class="form-control py-3 shadow-sm border-0" style="padding-left: 1.5rem;" placeholder="Buscar empréstimos por livro, leitor ou status...">
+</div>
+
+<h5 class="text-secondary fw-bold mb-3 ms-2">Empréstimos Ativos</h5>
 <div class="table-wrapper">
-    <table class="table table-borderless">
+    <table class="table table-borderless" id="tabelaEmprestimos">
         <thead>
             <tr>
                 <th>Livro Emprestado</th><th>Leitor</th><th>Retirada</th><th>Devolução</th><th class="text-center">Status</th><th class="text-center">Ação</th>
@@ -136,6 +140,15 @@
 document.getElementById('buscaLivros').addEventListener('keyup', function() {
     let valor = this.value.toLowerCase();
     let linhas = document.querySelectorAll('#tabelaLivros tbody tr');
+    linhas.forEach(function(linha) {
+        let texto = linha.innerText.toLowerCase();
+        linha.style.display = texto.includes(valor) ? '' : 'none';
+    });
+});
+
+document.getElementById('buscaEmprestimos').addEventListener('keyup', function() {
+    let valor = this.value.toLowerCase();
+    let linhas = document.querySelectorAll('#tabelaEmprestimos tbody tr');
     linhas.forEach(function(linha) {
         let texto = linha.innerText.toLowerCase();
         linha.style.display = texto.includes(valor) ? '' : 'none';
