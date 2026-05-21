@@ -111,6 +111,7 @@
             </tr>
         </thead>
         <tbody>
+<<<<<<< HEAD
     {% for emp in emprestimos %}
     <tr class="{% if emp.prazo_devolucao < hoje %}linha-atrasada{% endif %}">
         <td class="fw-medium text-dark">{{ emp.livro.nome }}</td>
@@ -138,6 +139,30 @@
         </tr>
     {% endfor %}
 </tbody>
+=======
+            {% for emp in emprestimos %}
+            <tr class="{% if emp.prazo_devolucao < hoje %}linha-atrasada{% endif %}">
+                <td class="fw-medium text-dark">{{ emp.livro.nome }}</td>
+                <td>{{ emp.nome_pessoa }}</td>
+                <td>{{ emp.data_emprestimo.strftime('%d/%m/%Y') }}</td>
+                <td class="fw-medium text-dark">{{ emp.prazo_devolucao.strftime('%d/%m/%Y') }}</td>
+                <td class="text-center">
+                    {% if emp.prazo_devolucao < hoje %}
+                        <span class="badge bg-danger">Atrasado</span>
+                    {% else %}
+                        <span class="badge bg-info">No Prazo</span>
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    <a href="/devolver/{{ emp.id }}" class="btn btn-sm btn-outline-secondary">
+                        Devolver
+                    </a>
+                </td>
+            </tr>
+            {% else %}
+            {% endfor %}
+        </tbody>
+>>>>>>> 677dbc57be3e53f3f4a5226357afeb019b0cfa37
     </table>
 </div>
 

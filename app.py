@@ -107,6 +107,7 @@ def excluir_livro(id_livro):
         flash(f'O livro "{livro.nome}" foi excluído do sistema.', 'success')
         
     return redirect(url_for('index'))
+<<<<<<< HEAD
 # adicionar devolução
 @app.route('/estender_prazo/<int:id_emprestimo>', methods=['POST'])
 def estender_prazo(id_emprestimo):
@@ -122,6 +123,8 @@ def estender_prazo(id_emprestimo):
         flash('Erro ao atualizar o prazo.', 'danger')
         
     return redirect(url_for('index'))
+=======
+>>>>>>> 677dbc57be3e53f3f4a5226357afeb019b0cfa37
 
 if __name__ == '__main__':
     app.run(debug=True)
