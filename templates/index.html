@@ -36,8 +36,14 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label text-muted small ms-1 mb-1">Nome do Leitor</label>
-                            <input type="text" name="nome_pessoa" class="form-control" placeholder="Nome do Leitor" required>
+                            <label class="form-label text-muted small ms-1 mb-1">Selecione o Leitor</label>
+                            <select name="leitor_id" class="form-select" required>
+                                <option value="">Selecione um leitor...</option>
+                                {% for leitor in leitores %}
+                                    <option value="{{ leitor.id }}">{{ leitor.nome }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="mt-1"><a href="{{ url_for('listar_leitores') }}" class="small text-decoration-none">+ Cadastrar novo leitor</a></div>
                         </div>
                         <div class="col-md-3">
                             <label class="form-label text-muted small ms-1 mb-1">Prazo de Devolução</label>
@@ -100,7 +106,13 @@
             {% for emp in emprestimos %}
             <tr class="{% if emp.prazo_devolucao < hoje %}linha-atrasada{% endif %}">
                 <td class="fw-medium text-dark">{{ emp.livro.nome }}</td>
-                <td><a href="/historico_usuario/{{ emp.nome_pessoa }}" class="text-decoration-none">{{ emp.nome_pessoa }}</a></td>
+                <td>
+                    {% if emp.leitor %}
+                        <a href="{{ url_for('historico_usuario', leitor_id=emp.leitor.id) }}" class="text-decoration-none">{{ emp.leitor.nome }}</a>
+                    {% else %}
+                        {{ emp.nome_pessoa }} (Migrado)
+                    {% endif %}
+                </td>
                 <td>{{ emp.data_emprestimo.strftime('%d/%m/%Y') }}</td>
                 <td class="fw-medium text-dark">{{ emp.prazo_devolucao.strftime('%d/%m/%Y') }}</td>
                 <td class="text-center">
