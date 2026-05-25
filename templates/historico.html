@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h3 class="mb-4">Histórico de: <span class="text-primary">{{ nome }}</span></h3>
+    
+    <div class="table-wrapper">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Livro</th>
+                    <th>Data de Empréstimo</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for emp in historico %}
+                <tr>
+                    <td>{{ emp.livro.nome }}</td>
+                    <td>{{ emp.data_emprestimo.strftime('%d/%m/%Y') }}</td>
+                    <td>
+                        {% if emp.data_devolucao %}
+                            <span class="text-success">Devolvido em {{ emp.data_devolucao.strftime('%d/%m/%Y') }}</span>
+                        {% else %}
+                            <span class="text-warning">Em aberto</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="3">Nenhum histórico encontrado para este usuário.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">Voltar ao Início</a>
+</div>
+{% endblock %}

@@ -43,7 +43,6 @@ with app.app_context():
 @app.route('/')
 def index():
     livros = Livro.query.all()
-    # Empréstimos ativos (onde data_devolucao é nula)
     emprestimos_ativos = Emprestimo.query.filter_by(data_devolucao=None).all()
     hoje = date.today()
     return render_template('index.html', livros=livros, emprestimos=emprestimos_ativos, hoje=hoje)
@@ -69,8 +68,19 @@ def emprestar():
     nome_pessoa = request.form.get('nome_pessoa')
     prazo_str = request.form.get('prazo_devolucao')
     
-    livro = Livro.query.get(livro_id)
+    # Validação 1: O leitor já possui este livro específico em aberto?
+    duplicado = Emprestimo.query.filter_by(nome_pessoa=nome_pessoa, livro_id=livro_id, data_devolucao=None).first()
+    if duplicado:
+        flash(f'Erro: {nome_pessoa} já possui o livro "{duplicado.livro.nome}" emprestado!', 'danger')
+        return redirect(url_for('index'))
+
+    # Validação 2: Manter sua regra original (limite de 1 livro ativo por leitor)
+    emprestimo_ativo = Emprestimo.query.filter_by(nome_pessoa=nome_pessoa, data_devolucao=None).first()
+    if emprestimo_ativo:
+        flash(f'Erro: {nome_pessoa} já possui um livro emprestado. Devolva-o antes de pegar outro.', 'danger')
+        return redirect(url_for('index'))
     
+    livro = Livro.query.get(livro_id)
     if livro and livro.quantidade > 0:
         prazo = datetime.strptime(prazo_str, '%Y-%m-%d').date()
         novo_emprestimo = Emprestimo(livro_id=livro.id, nome_pessoa=nome_pessoa, prazo_devolucao=prazo)
@@ -81,50 +91,43 @@ def emprestar():
         
         flash('Empréstimo realizado com sucesso!', 'success')
     else:
-        flash('Erro: Livro indisponível ou em falta no estoque.', 'danger')
+        flash('Erro: Livro indisponível.', 'danger')
         
     return redirect(url_for('index'))
 
 @app.route('/devolver/<int:id_emprestimo>')
 def devolver(id_emprestimo):
     emprestimo = Emprestimo.query.get(id_emprestimo)
-    
     if emprestimo and not emprestimo.data_devolucao:
         emprestimo.data_devolucao = date.today()
         emprestimo.livro.quantidade += 1
         db.session.commit()
         flash('Livro devolvido com sucesso!', 'success')
-        
     return redirect(url_for('index'))
 
 @app.route('/excluir_livro/<int:id_livro>')
 def excluir_livro(id_livro):
     livro = Livro.query.get(id_livro)
-    
     if livro:
         db.session.delete(livro)
         db.session.commit()
-        flash(f'O livro "{livro.nome}" foi excluído do sistema.', 'success')
-        
+        flash(f'O livro "{livro.nome}" foi excluído.', 'success')
     return redirect(url_for('index'))
-<<<<<<< HEAD
-# adicionar devolução
+
 @app.route('/estender_prazo/<int:id_emprestimo>', methods=['POST'])
 def estender_prazo(id_emprestimo):
     emprestimo = Emprestimo.query.get(id_emprestimo)
     nova_data = request.form.get('nova_data')
-    
     if emprestimo and nova_data:
-        # Converte a data enviada pelo formulário para objeto date
         emprestimo.prazo_devolucao = datetime.strptime(nova_data, '%Y-%m-%d').date()
         db.session.commit()
-        flash('Prazo estendido com sucesso!', 'success')
-    else:
-        flash('Erro ao atualizar o prazo.', 'danger')
-        
+        flash('Prazo estendido!', 'success')
     return redirect(url_for('index'))
-=======
->>>>>>> 677dbc57be3e53f3f4a5226357afeb019b0cfa37
+
+@app.route('/historico_usuario/<string:nome>')
+def historico_usuario(nome):
+    historico = Emprestimo.query.filter_by(nome_pessoa=nome).order_by(Emprestimo.data_emprestimo.desc()).all()
+    return render_template('historico.html', historico=historico, nome=nome)
 
 if __name__ == '__main__':
     app.run(debug=True)
