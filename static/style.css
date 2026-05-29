@@ -150,6 +150,7 @@ body {
 .linha-atrasada {
     animation: pulsoAtraso 2s infinite;
     background-color: #fffbfa;
+<<<<<<< HEAD
 }
 .navbar-user-text {
     font-size: 1.2rem;       /* Aumenta o tamanho da fonte */
@@ -157,4 +158,6 @@ body {
     display: flex;           /* Garante a centralização */
     align-items: center;     /* Alinha verticalmente */
     color: #ffffff !important;
+=======
+>>>>>>> f2c45281a5fc34394262e4df7b2c70c815ba6e93
 }

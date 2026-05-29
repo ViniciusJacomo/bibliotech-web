@@ -20,6 +20,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
+<<<<<<< HEAD
                 <ul class="navbar-nav ms-auto align-items-center">
                     {% if session.get('livraria_nome') %}
                         <li class="nav-item">
@@ -39,6 +40,15 @@
                             <a class="nav-link" href="{{ url_for('login') }}"><i class="bi bi-box-arrow-in-right me-1"></i>Login</a>
                         </li>
                     {% endif %}
+=======
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}"><i class="bi bi-house-door me-1"></i>Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('listar_leitores') }}"><i class="bi bi-people me-1"></i>Leitores</a>
+                    </li>
+>>>>>>> f2c45281a5fc34394262e4df7b2c70c815ba6e93
                 </ul>
             </div>
         </div>
