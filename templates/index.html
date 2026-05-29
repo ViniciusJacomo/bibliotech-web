@@ -6,11 +6,11 @@
         <div class="card card-novo-livro">
             <div class="card-header font-weight-bold">Novo Livro</div>
             <div class="card-body">
-<<<<<<< HEAD
+
                 <form action="{{ url_for('adicionar_livro') }}" method="POST">
-=======
+
                 <form action="/adicionar_livro" method="POST">
->>>>>>> f2c45281a5fc34394262e4df7b2c70c815ba6e93
+
                     <div class="row g-3 mb-3">
                         <div class="col-md-3"><input type="text" name="nome" class="form-control" placeholder="Nome do Livro" required></div>
                         <div class="col-md-3"><input type="text" name="autor" class="form-control" placeholder="Autor" required></div>
@@ -28,11 +28,11 @@
         <div class="card card-emprestimo">
             <div class="card-header font-weight-bold">Registrar Empréstimo</div>
             <div class="card-body">
-<<<<<<< HEAD
+
                 <form action="{{ url_for('emprestar') }}" method="POST">
-=======
+
                 <form action="/emprestar" method="POST">
->>>>>>> f2c45281a5fc34394262e4df7b2c70c815ba6e93
+
                     <div class="row g-3 mb-3 align-items-end">
                         <div class="col-md-5">
                             <label class="form-label text-muted small ms-1 mb-1">Selecione o Livro</label>
@@ -90,11 +90,11 @@
                     {% else %}<span class="badge bg-success">Disponível</span>{% endif %}
                 </td>
                 <td class="text-center">
-<<<<<<< HEAD
+
                     <a href="{{ url_for('excluir_livro', id_livro=livro.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir {{ livro.nome }}?');">Excluir</a>
-=======
+
                     <a href="/excluir_livro/{{ livro.id }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir {{ livro.nome }}?');">Excluir</a>
->>>>>>> f2c45281a5fc34394262e4df7b2c70c815ba6e93
+
                 </td>
             </tr>
             {% endfor %}
@@ -132,19 +132,19 @@
                     {% else %}<span class="badge bg-info">No Prazo</span>{% endif %}
                 </td>
                 <td class="text-center">
-<<<<<<< HEAD
+
                     <form action="{{ url_for('estender_prazo', id_emprestimo=emp.id) }}" method="POST" class="d-inline-flex gap-1 align-items-center mb-1">
                         <input type="date" name="nova_data" class="form-control form-control-sm" required style="width: auto;">
                         <button type="submit" class="btn btn-sm btn-outline-primary">Salvar</button>
                     </form>
                     <a href="{{ url_for('devolver', id_emprestimo=emp.id) }}" class="btn btn-sm btn-outline-secondary">Devolver</a>
-=======
+
                     <form action="/estender_prazo/{{ emp.id }}" method="POST" class="d-inline-flex gap-1 align-items-center mb-1">
                         <input type="date" name="nova_data" class="form-control form-control-sm" required style="width: auto;">
                         <button type="submit" class="btn btn-sm btn-outline-primary">Salvar</button>
                     </form>
                     <a href="/devolver/{{ emp.id }}" class="btn btn-sm btn-outline-secondary">Devolver</a>
->>>>>>> f2c45281a5fc34394262e4df7b2c70c815ba6e93
+
                 </td>
             </tr>
             {% else %}
