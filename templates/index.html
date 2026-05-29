@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-12 mb-4">
+        <div class="card card-novo-livro">
+            <div class="card-header font-weight-bold">Novo Livro</div>
+            <div class="card-body">
+                <form action="{{ url_for('adicionar_livro') }}" method="POST">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3"><input type="text" name="nome" class="form-control" placeholder="Nome do Livro" required></div>
+                        <div class="col-md-3"><input type="text" name="autor" class="form-control" placeholder="Autor" required></div>
+                        <div class="col-md-3"><input type="text" name="categoria" class="form-control" placeholder="Categoria" required></div>
+                        <div class="col-md-2"><input type="text" name="isbn" class="form-control" placeholder="ISBN"></div>
+                        <div class="col-md-1"><input type="number" name="quantidade" class="form-control" placeholder="Qtd" min="1" required></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Cadastrar Livro</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-12">
+        <div class="card card-emprestimo">
+            <div class="card-header font-weight-bold">Registrar Empréstimo</div>
+            <div class="card-body">
+                <form action="{{ url_for('emprestar') }}" method="POST">
+                    <div class="row g-3 mb-3 align-items-end">
+                        <div class="col-md-5">
+                            <label class="form-label text-muted small ms-1 mb-1">Selecione o Livro</label>
+                            <select name="livro_id" class="form-select" required>
+                                <option value="">Selecione um livro...</option>
+                                {% for livro in livros if livro.quantidade > 0 %}
+                                    <option value="{{ livro.id }}">{{ livro.nome }} (Estoque: {{ livro.quantidade }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted small ms-1 mb-1">Selecione o Leitor</label>
+                            <select name="leitor_id" class="form-select" required>
+                                <option value="">Selecione um leitor...</option>
+                                {% for leitor in leitores %}
+                                    <option value="{{ leitor.id }}">{{ leitor.nome }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="mt-1"><a href="{{ url_for('listar_leitores') }}" class="small text-decoration-none">+ Cadastrar novo leitor</a></div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small ms-1 mb-1">Prazo de Devolução</label>
+                            <input type="date" name="prazo_devolucao" class="form-control" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Confirmar Empréstimo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-4">
+    <input type="text" id="buscaLivros" class="form-control py-3 shadow-sm border-0" placeholder="Buscar livros...">
+</div>
+
+<h5 class="text-secondary fw-bold mb-3 ms-2">Estoque e Disponibilidade</h5>
+<div class="table-wrapper">
+    <table class="table table-borderless" id="tabelaLivros">
+        <thead>
+            <tr>
+                <th>Nome do Livro</th><th>Autor</th><th>Categoria</th><th class="text-center">Estoque</th><th class="text-center">Status</th><th class="text-center">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for livro in livros %}
+            <tr>
+                <td class="fw-medium text-dark">{{ livro.nome }}</td>
+                <td>{{ livro.autor }}</td>
+                <td>{{ livro.categoria }}</td>
+                <td class="text-center fw-bold">{{ livro.quantidade }}</td>
+                <td class="text-center">
+                    {% if livro.quantidade == 0 %}<span class="badge bg-danger">Esgotado</span>
+                    {% elif livro.quantidade <= 2 %}<span class="badge bg-warning">Estoque Baixo</span>
+                    {% else %}<span class="badge bg-success">Disponível</span>{% endif %}
+                </td>
+                <td class="text-center">
+                    <a href="{{ url_for('excluir_livro', id_livro=livro.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir {{ livro.nome }}?');">Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="mb-4 mt-5">
+    <input type="text" id="buscaEmprestimos" class="form-control py-3 shadow-sm border-0" placeholder="Buscar empréstimos...">
+</div>
+
+<h5 class="text-secondary fw-bold mb-3 ms-2">Empréstimos Ativos</h5>
+<div class="table-wrapper">
+    <table class="table table-borderless" id="tabelaEmprestimos">
+        <thead>
+            <tr>
+                <th>Livro</th><th>Leitor</th><th>Retirada</th><th>Devolução</th><th class="text-center">Status</th><th class="text-center">Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in emprestimos %}
+            <tr class="{% if emp.prazo_devolucao < hoje %}linha-atrasada{% endif %}">
+                <td class="fw-medium text-dark">{{ emp.livro.nome }}</td>
+                <td>
+                    {% if emp.leitor %}
+                        <a href="{{ url_for('historico_usuario', leitor_id=emp.leitor.id) }}" class="text-decoration-none">{{ emp.leitor.nome }}</a>
+                    {% else %}
+                        {{ emp.nome_pessoa }} (Migrado)
+                    {% endif %}
+                </td>
+                <td>{{ emp.data_emprestimo.strftime('%d/%m/%Y') }}</td>
+                <td class="fw-medium text-dark">{{ emp.prazo_devolucao.strftime('%d/%m/%Y') }}</td>
+                <td class="text-center">
+                    {% if emp.prazo_devolucao < hoje %}<span class="badge bg-danger">Atrasado</span>
+                    {% else %}<span class="badge bg-info">No Prazo</span>{% endif %}
+                </td>
+                <td class="text-center">
+                    <form action="{{ url_for('estender_prazo', id_emprestimo=emp.id) }}" method="POST" class="d-inline-flex gap-1 align-items-center mb-1">
+                        <input type="date" name="nova_data" class="form-control form-control-sm" required style="width: auto;">
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Salvar</button>
+                    </form>
+                    <a href="{{ url_for('devolver', id_emprestimo=emp.id) }}" class="btn btn-sm btn-outline-secondary">Devolver</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center">Nenhum empréstimo ativo.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.getElementById('buscaLivros').addEventListener('keyup', function() {
+        let v = this.value.toLowerCase();
+        document.querySelectorAll('#tabelaLivros tbody tr').forEach(tr => tr.style.display = tr.innerText.toLowerCase().includes(v) ? '' : 'none');
+    });
+    document.getElementById('buscaEmprestimos').addEventListener('keyup', function() {
+        let v = this.value.toLowerCase();
+        document.querySelectorAll('#tabelaEmprestimos tbody tr').forEach(tr => tr.style.display = tr.innerText.toLowerCase().includes(v) ? '' : 'none');
+    });
+</script>
+{% endblock %}

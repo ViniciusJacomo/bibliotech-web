@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-12 mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white fw-bold text-primary">
+                <i class="bi bi-person-plus-fill me-2"></i>Novo Leitor
+            </div>
+            <div class="card-body">
+                <form action="/adicionar_leitor" method="POST">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted">Nome Completo</label>
+                            <input type="text" name="nome" class="form-control" placeholder="Ex: João Silva" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted">Documento (CPF/RG)</label>
+                            <input type="text" name="documento" class="form-control" placeholder="000.000.000-00">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted">Contato (Telefone/Email)</label>
+                            <input type="text" name="contato" class="form-control" placeholder="(11) 99999-9999">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2">
+                        <i class="bi bi-check-circle me-2"></i>Cadastrar Leitor
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h5 class="text-secondary fw-bold mb-3 ms-2">Leitores Cadastrados</h5>
+<div class="table-responsive bg-white rounded shadow-sm">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+            <tr>
+                <th>Nome</th>
+                <th>Documento</th>
+                <th>Contato</th>
+                <th class="text-center">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leitor in leitores %}
+            <tr>
+                <td class="fw-medium">{{ leitor.nome }}</td>
+                <td>{{ leitor.documento or '-' }}</td>
+                <td>{{ leitor.contato or '-' }}</td>
+                <td class="text-center">
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="{{ url_for('historico_usuario', leitor_id=leitor.id) }}" class="btn btn-sm btn-outline-info">
+                            <i class="bi bi-clock-history"></i> Histórico
+                        </a>
+                        <a href="/excluir_leitor/{{ leitor.id }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Deseja excluir o leitor {{ leitor.nome }}?');">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="text-center py-4 text-muted">Nenhum leitor cadastrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-4">
+    <a href="{{ url_for('index') }}" class="btn btn-link text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Voltar para Início
+    </a>
+</div>
+{% endblock %}
